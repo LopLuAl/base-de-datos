@@ -1,0 +1,25 @@
+# Estos paquetes se agregan a los que ya venimos usando en el ambiente virtual
+# mysqlclient, sqlobject, flask, etc.
+
+# para los ejemplos de serializacion
+(ambiente_virtual)user@hostname:~/ pip install pyyaml
+
+# para los ejemplos de xmlrpc
+(ambiente_virtual)user@hostname:~/ pip install twisted
+
+# para los ejemplos de broker mqtt, primero instalar el broker y sus clientes
+# para los usuarios de ubuntu, debian y sus parientes ...
+sudo apt-get update
+sudo apt-get install mosquitto mosquitto-clients
+# verificar si esta coorriendo
+ps aux | grep mosquitto
+# deberia aparecer una linea de este tipo
+mosquit+  1174  0.0  0.0  43328  6644 ?        S    07:26   0:13 /usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
+
+# despues instalar el cliente para python
+(ambiente_virtual)user@hostname:~/ pip install paho-mqtt
+
+# para los ejemplos de rest
+(ambiente_virtual)user@hostname:~/ pip install flask-restful
+(ambiente_virtual)user@hostname:~/ pip install requests
+

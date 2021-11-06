@@ -1,0 +1,11 @@
+# Libs
+
+## Linux
+- sudo apt-get install redis-server
+- sudo apt-get install couchdb
+
+## Python
+- pip install mysqlclient
+- pip install redis
+- pip install couchdb
+- pip install redlock-py

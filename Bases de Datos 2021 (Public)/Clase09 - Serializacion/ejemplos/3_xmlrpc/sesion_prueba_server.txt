@@ -1,0 +1,54 @@
+>>> from xmlrpc.client import ServerProxy
+>>> s = ServerProxy('http://localhost:8000')
+>>> s.system.listMethods()
+['add', 'echo', 'get_artist_and_albums', 'system.listMethods', 'system.methodHelp', 'system.methodSignature']
+>>> print(s.system.methodHelp('add'))
+suma dos numeros o concatena dos strings
+>>> print(s.system.methodHelp('echo'))
+devuelve lo mismo que recibe
+>>> print(s.system.methodSignature('add'))
+signatures not supported
+>>> s.echo('hola')
+'hola'
+>>> s.echo(2)
+2
+>>> s.echo(2.45)
+2.45
+>>> s.add(2, 5)
+7
+>>> s.add(5, 5.44)
+10.440000000000001
+>>> s.add(5, 5.4)
+10.4
+>>> s.add('hola, ', 'mundo!')
+'hola, mundo!'
+>>> from pprint import pprint
+>>> pprint(s.get_artist_and_albums('AC/DC'))
+{'albums': [{'artistID': 1,
+             'id': 1,
+             'title': 'For Those About To Rock We Salute You'},
+            {'artistID': 1, 'id': 4, 'title': 'Let There Be Rock'}],
+ 'id': 1,
+ 'name': 'AC/DC'}
+>>> pprint(s.get_artist_and_albums('Deep Purple'))
+{'albums': [{'artistID': 58,
+             'id': 43,
+             'title': 'MK III The Final Concerts [Disc 1]'},
+            {'artistID': 58,
+             'id': 50,
+             'title': 'The Final Concerts (Disc 2)'},
+            {'artistID': 58, 'id': 58, 'title': 'Come Taste The Band'},
+            {'artistID': 58, 'id': 59, 'title': 'Deep Purple In Rock'},
+            {'artistID': 58, 'id': 60, 'title': 'Fireball'},
+            {'artistID': 58,
+             'id': 61,
+             'title': "Knocking at Your Back Door: The Best Of Deep Purple in the 80's"},
+            {'artistID': 58, 'id': 62, 'title': 'Machine Head'},
+            {'artistID': 58, 'id': 63, 'title': 'Purpendicular'},
+            {'artistID': 58, 'id': 64, 'title': 'Slaves And Masters'},
+            {'artistID': 58, 'id': 65, 'title': 'Stormbringer'},
+            {'artistID': 58, 'id': 66, 'title': 'The Battle Rages On'}],
+ 'id': 58,
+ 'name': 'Deep Purple'}
+>>> 
+
