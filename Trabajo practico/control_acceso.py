@@ -2,20 +2,17 @@
 # -*- coding: utf-8 -*-
 import sys
 import MySQLdb
+import datetime
+import time
 
 
-
-class ABM_rebasico:
-    '''
-        implementa un ABM sencillo para la tabla Artist de Chinook
-    '''
+class ABM_CONTROL_ACCESO:
     def __init__(self, host, user, passwd, dbase):
         self._host = host
         self._user = user
         self._passwd = passwd
         self._dbase = dbase
         self._conn = None
-
     def conectar(self):
         '''
             realiza la conexion a la base de datos
@@ -264,11 +261,47 @@ class ABM_rebasico:
         finally:
             cur.close()
         return error
+    def verificar_hora(self):
+        if not self._verifica_conexion():
+            return False
+        error = False
+        try:
+            cur = self._conn.cursor()
+            cur.execute("SELECT * FROM Horario_laboral" )
+            lista = cur.fetchall()
+            hora_entrada                =   lista[0][1]
+            hora_salida                 =   lista[0][2]
+            #print(hora_entrada)
+            hora_actual  = datetime.datetime.now()
+            hora_actual2 = datetime.datetime.now()
+            #print(hora_entrada.seconds/3600)
+            hora_entrada = hora_actual.replace((int)(hora_entrada.seconds/3600), minute=0, second=0, microsecond=0)
+            #hora_salida  = hora_actual2.replace((int)(hora_salida.seconds/3600), minute=0, second=0, microsecond=0)
+            #print(hora_actual)
+            print(hora_entrada)
+        #    print(hora_salida)
+
+            '''
+                con id_usuario me voy a mover en toda la base de datos para chequear
+                A) Si el horario de entrada es el correcto
+                .B) Si el usuario esta activo
+                C) Si el usuario quiere entrar a un nivel Permitido
+                .D) Identificarlo por nombre y apellido
+                .E) Chequeo tag
+            '''
+        except:
+            print(sys.exc_info()[1])
+            error = True
+        finally:
+            cur.close()
+        return error
 if __name__ == '__main__':
-    bdd=ABM_rebasico('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
+    bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
     #bdd.listar_personas()
     #bdd.listar_puertas()
     id=bdd.chequear_tag(12345678) ## terminar de ver error handler
     bdd.identificar(id[0])
+    #A verificar_nivel recibe el id_puerta y ID_pERSONA
     bdd.verificar_nivel(id[0],1)
+    bdd.verificar_hora()
