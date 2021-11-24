@@ -78,91 +78,6 @@ class ABM_CONTROL_ACCESO:
         finally:
             cur.close()
         return error
-    def agregar(self, datos):
-        '''
-            agrega nuevos 'artists' en la tabla Artist
-            el listado de los artists a insertar viene en 'datos'
-            retorna True si la operacion fue exitosa
-        '''
-        if not self._verifica_conexion():
-            return False
-        error = False
-        try:
-            cur = self._conn.cursor()
-            for artist, otro in datos:
-                print("... insertando '%s' en la tabla Artist" % artist)
-                cur.execute("INSERT INTO Artist (Name) VALUES (%s)", (artist,))
-        except:
-            import traceback
-            traceback.print_exc()
-            print(sys.exc_info()[1])
-            error = True
-        finally:
-            cur.close()
-        return error
-
-    def borrar(self, datos):
-        '''
-            elimina 'artists' en la tabla Artist
-            el listado de los artists a eliminar viene en 'datos'
-            retorna True si la operacion fue exitosa
-        '''
-        if not self._verifica_conexion():
-            return False
-        error = False
-        try:
-            cur = self._conn.cursor()
-            for artist, otro in datos:
-                print("... borrando '%s' en la tabla Artist" % artist)
-                cur.execute("DELETE FROM Artist WHERE Name=%s", (artist,))
-        except:
-            print(sys.exc_info()[1])
-            error = True
-        finally:
-            cur.close()
-        return error
-
-    def modificar(self, datos):
-        '''
-            modifica 'artists' en la tabla Artist
-            el listado de los artists a modificar viene en 'datos'
-            retorna True si la operacion fue exitosa
-        '''
-        if not self._verifica_conexion():
-            return False
-        error = False
-        try:
-            cur = self._conn.cursor()
-            for artist, new_artist in datos:
-                print("... modificando '%s' en la tabla Artist por '%s'" % (artist, new_artist))
-                cur.execute("UPDATE Artist SET Name=%s WHERE Name=%s", (new_artist, artist))
-        except:
-            print(sys.exc_info()[1])
-            error = True
-        finally:
-            cur.close()
-        return error
-
-    def limpiar(self, datos):
-        '''
-            elimina 'artists' en la tabla Artist que hayan sido insertados o modificados
-            el listado de los artists a eliminar viene en 'datos'
-            retorna True si la operacion fue exitosa
-        '''
-        if not self._verifica_conexion():
-            return False
-        error = False
-        try:
-            cur = self._conn.cursor()
-            for artist, otro in datos:
-                print("... borrando '%s' y/o '%s' en la tabla Artist" % (artist, otro))
-                cur.execute("DELETE FROM Artist WHERE Name=%s OR Name=%s", (artist, otro))
-        except:
-            print(sys.exc_info()[1])
-            error = True
-        finally:
-            cur.close()
-        return error
 
     def chequear_tag(self,tag):
         if not self._verifica_conexion():
@@ -180,14 +95,6 @@ class ABM_CONTROL_ACCESO:
             else:
                 print("TAG ID NO ENCONTRADO")
                 return -1
-            '''
-                con id_usuario me voy a mover en toda la base de datos para chequear
-                A) Si el horario de entrada es el correcto
-            .    B) Si el usuario esta activo
-                C) Si el usuario quiere entrar a un nivel Permitido
-            .    D) Identificarlo por nombre y apellido
-                ->E) Chequeo tag
-            '''
         except:
             print(sys.exc_info()[1])
             error = True
@@ -210,14 +117,6 @@ class ABM_CONTROL_ACCESO:
             else:
                 print('Usuario dado de baja')
                 return False
-            '''
-                con id_usuario me voy a mover en toda la base de datos para chequear
-                A) Si el horario de entrada es el correcto
-                .B) Si el usuario esta activo
-                C) Si el usuario quiere entrar a un nivel Permitido
-                .D) Identificarlo por nombre y apellido
-                .E) Chequeo tag
-            '''
         except:
             print(sys.exc_info()[1])
             error = True
@@ -240,55 +139,32 @@ class ABM_CONTROL_ACCESO:
             print("ID_NIVEL_ACCESO %d, NIVEL_ACCESO_PERSONA_MAXIMO %d, NIVEL_ACCESO %d" %(ID_NIVEL_ACCESO,NIVEL_ACCESO_PERSONA_MAXIMO,NIVEL_ACCESO) )
             if NIVEL_ACCESO_PERSONA_MAXIMO >= NIVEL_ACCESO:
                 print('Pase')
+                return True
             else:
                 print('NO pase')
-            '''
-            for ID,Nombre,Apellido,Estado in lista :
-
-                print("asd %d, %d" % (Nombre, Apellido))
-            '''
-            '''
-                con id_usuario me voy a mover en toda la base de datos para chequear
-                A) Si el horario de entrada es el correcto
-                .B) Si el usuario esta activo
-                C) Si el usuario quiere entrar a un nivel Permitido
-                .D) Identificarlo por nombre y apellido
-                .E) Chequeo tag
-            '''
+                return False
         except:
             print(sys.exc_info()[1])
             error = True
         finally:
             cur.close()
         return error
-    def verificar_hora(self):
+    def verificar_hora_entrada(self):
         if not self._verifica_conexion():
             return False
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("SELECT * FROM Horario_laboral" )
+            cur.execute("select hora_entrada from Horario_laboral where Workplace = '1' and now() >= Hora_Entrada" )
             lista = cur.fetchall()
-            hora_entrada                =   lista[0][1]
-            hora_salida                 =   lista[0][2]
-            #print(hora_entrada)
-            hora_actual  = datetime.datetime.now()
-            hora_actual2 = datetime.datetime.now()
-            #print(hora_entrada.seconds/3600)
-            hora_entrada = hora_actual.replace((int)(hora_entrada.seconds/3600), minute=0, second=0, microsecond=0)
-            #hora_salida  = hora_actual2.replace((int)(hora_salida.seconds/3600), minute=0, second=0, microsecond=0)
-            #print(hora_actual)
-            print(hora_entrada)
-        #    print(hora_salida)
 
-            '''
-                con id_usuario me voy a mover en toda la base de datos para chequear
-                A) Si el horario de entrada es el correcto
-                .B) Si el usuario esta activo
-                C) Si el usuario quiere entrar a un nivel Permitido
-                .D) Identificarlo por nombre y apellido
-                .E) Chequeo tag
-            '''
+            if lista:
+                print('Horario laboral Permitido')
+                return True
+            else:
+                print('Horario laboral no permitdo el ingreso')
+                return False
+
         except:
             print(sys.exc_info()[1])
             error = True
@@ -298,10 +174,10 @@ class ABM_CONTROL_ACCESO:
 if __name__ == '__main__':
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
-    #bdd.listar_personas()
-    #bdd.listar_puertas()
     id=bdd.chequear_tag(12345678) ## terminar de ver error handler
-    bdd.identificar(id[0])
-    #A verificar_nivel recibe el id_puerta y ID_pERSONA
-    bdd.verificar_nivel(id[0],1)
-    bdd.verificar_hora()
+    if bdd.identificar(id[0]) == True:
+        if bdd.verificar_nivel(id[0],1) == True:
+            if bdd.verificar_hora_entrada() == True:
+                print('Bienvendio')
+            else:
+                print('---NO---')
