@@ -4,7 +4,7 @@ import sys
 import MySQLdb
 import datetime
 import time
-
+from time import gmtime, strftime
 
 class ABM_CONTROL_ACCESO:
     def __init__(self, host, user, passwd, dbase):
@@ -40,10 +40,6 @@ class ABM_CONTROL_ACCESO:
         return True
 
     def listar_puertas(self):
-        '''
-            lista la tabla Artist
-            retorna True si pudo realizar la operacion exitosamente
-        '''
         if not self._verifica_conexion():
             return False
         error = False
@@ -93,7 +89,6 @@ class ABM_CONTROL_ACCESO:
                     id_usuario = id
                 return id_usuario
             else:
-                print("TAG ID NO ENCONTRADO")
                 return -1
         except:
             print(sys.exc_info()[1])
@@ -112,10 +107,8 @@ class ABM_CONTROL_ACCESO:
             for ID,Nombre,Apellido,Estado in lista :
                 print("Bienvenido %s, %s" % (Nombre, Apellido))
             if lista[0][3] == 1:
-                print('Usuario Activo')
                 return True
             else:
-                print('Usuario dado de baja')
                 return False
         except:
             print(sys.exc_info()[1])
@@ -138,10 +131,8 @@ class ABM_CONTROL_ACCESO:
             NIVEL_ACCESO                =   lista[0][0]
             print("ID_NIVEL_ACCESO %d, NIVEL_ACCESO_PERSONA_MAXIMO %d, NIVEL_ACCESO %d" %(ID_NIVEL_ACCESO,NIVEL_ACCESO_PERSONA_MAXIMO,NIVEL_ACCESO) )
             if NIVEL_ACCESO_PERSONA_MAXIMO >= NIVEL_ACCESO:
-                print('Pase')
                 return True
             else:
-                print('NO pase')
                 return False
         except:
             print(sys.exc_info()[1])
@@ -155,14 +146,12 @@ class ABM_CONTROL_ACCESO:
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("select hora_entrada from Horario_laboral where Workplace = '1' and now() >= Hora_Entrada" )
+            cur.execute("select hora_entrada,hora_salida from Horario_laboral where Workplace = '1' and now() >= Hora_Entrada and now()<=Hora_salida;" )
             lista = cur.fetchall()
 
             if lista:
-                print('Horario laboral Permitido')
                 return True
             else:
-                print('Horario laboral no permitdo el ingreso')
                 return False
 
         except:
@@ -222,19 +211,33 @@ if __name__ == '__main__':
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
     id_tag=bdd.chequear_tag(12345678) ## terminar de ver error handler
-    if bdd.identificar(id_tag[0]) == True:
-        if bdd.verificar_nivel(id_tag[0],1) == True:
-            if bdd.verificar_hora_entrada() == True:
-                print('Bienvendio')
-                bdd.modificar_estadistica(self, id_tag[0],1,0,id_pueta)
+    if id_tag:
+        if bdd.identificar(id_tag[0]) == True:
+            if bdd.verificar_nivel(id_tag[0],1) == True:
+                if bdd.verificar_hora_entrada() == True:
+                    print('Bienvendio')
+                    bdd.modificar_estadistica(id_tag[0],1,0,id_pueta)
+                else:
+                    print('---Hora de entrada no permitida---')
+                    bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+                    exit()
             else:
-                print('---NO---')
+                print('Nivel no permitido')
                 bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
-    bdd.mostrar_estadistica(id_pueta)
-    #TODO:
-    '''
-        Modificar estadistica
+                exit()
+        else:
+            print('Usuario dado de baja')
+            bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+            exit()
+    else:
+        print("TAG id no encontrado")
+        bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+        exit()
+    ###Reporte diario a una determinada hora 
+    actual=strftime("%H:%M", gmtime())
+    dia   =strftime("%a, %d %b %Y", gmtime())
 
-        Imprimir estadistica
-
-    '''
+    if actual=='23:06':
+        print(dia)
+        print('\n\nGenerando reporte diario....\n\n')
+        bdd.mostrar_estadistica(id_pueta)

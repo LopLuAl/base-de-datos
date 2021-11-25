@@ -86,7 +86,7 @@ ALTER TABLE `Workplace`
   ADD CONSTRAINT `fk_puerta_ID` FOREIGN KEY (`Oficina`) REFERENCES `Puerta` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 INSERT INTO `Horario_laboral` (`Workplace`, `Hora_Entrada`, `Hora_Salida`)
-  VALUES (1, '09:00:00', '18:00:00');
+  VALUES (1, '09:00:00', '22:00:00');
 
 INSERT INTO `Puerta` (`ID`, `Abierta_Cerrada`) VALUES (1, 0);
 INSERT INTO `Puerta` (`ID`, `Abierta_Cerrada`) VALUES (2, 0);
