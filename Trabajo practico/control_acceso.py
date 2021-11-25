@@ -171,13 +171,70 @@ class ABM_CONTROL_ACCESO:
         finally:
             cur.close()
         return error
+
+
+    def modificar_estadistica(self, tag_id,permitido,denegado,id):
+        '''
+            `TAG_ID`,`Permitido`,`Denegados`,`ID
+        '''
+        if not self._verifica_conexion():
+            return False
+        error = False
+        try:
+            cur = self._conn.cursor()
+            cur.execute("SELECT Permitido, Denegados FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
+            lista = cur.fetchall()
+
+            if permitido:
+                permitido=lista[0][0]+1
+            if denegado:
+                denegado=lista[0][1]+1
+
+            cur.execute("UPDATE Puerta_estadistica SET TAG_ID="+"'"+str(tag_id)+"'"+",Permitido="+"'"+str(permitido)+"'"+",Denegados= "+"'"+str(denegado)+"'"+" WHERE ID="+"'"+str(id)+"'")
+        except:
+            print(sys.exc_info()[1])
+            error = True
+        finally:
+            cur.close()
+        return error
+    def mostrar_estadistica(self,id):
+        '''
+            `TAG_ID`,`Permitido`,`Denegados`,`ID
+        '''
+        if not self._verifica_conexion():
+            return False
+        error = False
+        try:
+            cur = self._conn.cursor()
+            cur.execute("SELECT * FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
+            lista = cur.fetchall()
+            for TAG_ID,Permitido,Denegados,ID in lista :
+                print("---Estadisitca--- \n|Ultimo TAG ID: %d |\n|Permitidos: %d    |\n|Denegados : %d   |" % (TAG_ID, Permitido,Denegados))
+        except:
+            print(sys.exc_info()[1])
+            error = True
+        finally:
+            cur.close()
+        return error
+
 if __name__ == '__main__':
+    id_pueta = 1
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
-    id=bdd.chequear_tag(12345678) ## terminar de ver error handler
-    if bdd.identificar(id[0]) == True:
-        if bdd.verificar_nivel(id[0],1) == True:
+    id_tag=bdd.chequear_tag(12345678) ## terminar de ver error handler
+    if bdd.identificar(id_tag[0]) == True:
+        if bdd.verificar_nivel(id_tag[0],1) == True:
             if bdd.verificar_hora_entrada() == True:
                 print('Bienvendio')
+                bdd.modificar_estadistica(self, id_tag[0],1,0,id_pueta)
             else:
                 print('---NO---')
+                bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+    bdd.mostrar_estadistica(id_pueta)
+    #TODO:
+    '''
+        Modificar estadistica
+
+        Imprimir estadistica
+
+    '''

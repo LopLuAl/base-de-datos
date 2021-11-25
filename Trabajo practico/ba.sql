@@ -59,12 +59,8 @@ CREATE TABLE `Puerta` (
 -- -----------------------------------------------------
 CREATE TABLE `Puerta_estadistica` (
   `TAG_ID` int(11) NOT NULL ,
-  `Hora` time NOT NULL,
-  `Dia` date NOT NULL,
   `Permitido` int(11) NOT NULL,
   `Denegados` int(11) NOT NULL,
-  `Entrada` int(11) NOT NULL,
-  `Salida` int(11) NOT NULL,
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`ID`)
 ) ;
@@ -115,6 +111,6 @@ INSERT INTO `Persona` (`ID`, `Nombre`, `Apellido`, `Estado`) VALUES
     (3, 'Marco', 'Antonio', 1);
 INSERT INTO `Workplace` (`ID`, `Direccion`, `Oficina`, `ID_Empleado`)
   VALUES (1, 1, 1, 0);
-
-
+INSERT INTO `Puerta_estadistica` (`TAG_ID`,`Permitido`,`Denegados`,`ID`)
+  VALUES (0,0,0,1);
 COMMIT;
