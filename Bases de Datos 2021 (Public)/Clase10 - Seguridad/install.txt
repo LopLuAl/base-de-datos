@@ -1,4 +1,0 @@
-sudo apt-get install python3-dev
-
-pip install bcrypt
-pip install pycrypto
