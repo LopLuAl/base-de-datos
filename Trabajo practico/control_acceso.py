@@ -242,9 +242,8 @@ if __name__ == '__main__':
         exit()
     ###Reporte diario a una determinada hora
     actual=strftime("%H:%M", gmtime())
-    dia   =strftime("%a, %d %b %Y", gmtime())
 
     if actual=='23:06':
-        print(dia)
+        print(strftime("%a, %d %b %Y", gmtime()))
         print('\n\nGenerando reporte diario....\n\n')
         bdd.mostrar_estadistica(id_pueta)
