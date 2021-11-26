@@ -207,33 +207,40 @@ class ABM_CONTROL_ACCESO:
         return error
 
 if __name__ == '__main__':
+    '''
+        Variables de simulacion
+    '''
     id_pueta = 1
+    tag = 12345678
+    '''
+        Variables de simulacion
+    '''
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
-    id_tag=bdd.chequear_tag(12345678) ## terminar de ver error handler
-    if id_tag:
-        if bdd.identificar(id_tag[0]) == True:
-            if bdd.verificar_nivel(id_tag[0],1) == True:
+    id_usuario=bdd.chequear_tag(tag) ## terminar de ver error handler
+    if id_usuario:
+        if bdd.identificar(id_usuario[0]) == True:
+            if bdd.verificar_nivel(id_usuario[0],1) == True:
                 if bdd.verificar_hora_entrada() == True:
                     print('Bienvendio')
-                    bdd.modificar_estadistica(id_tag[0],1,0,id_pueta)
+                    bdd.modificar_estadistica(id_usuario[0],1,0,id_pueta)
                 else:
                     print('---Hora de entrada no permitida---')
-                    bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+                    bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
                     exit()
             else:
                 print('Nivel no permitido')
-                bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+                bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
                 exit()
         else:
             print('Usuario dado de baja')
-            bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+            bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
             exit()
     else:
         print("TAG id no encontrado")
-        bdd.modificar_estadistica(id_tag[0],0,1,id_pueta)
+        bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
         exit()
-    ###Reporte diario a una determinada hora 
+    ###Reporte diario a una determinada hora
     actual=strftime("%H:%M", gmtime())
     dia   =strftime("%a, %d %b %Y", gmtime())
 
