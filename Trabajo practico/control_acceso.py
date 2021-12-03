@@ -81,7 +81,7 @@ class ABM_CONTROL_ACCESO:
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("SELECT Nivel_acceso_persona.ID_pERSONA FROM Nivel_acceso_persona WHERE TAG_ID =" + "'" + str(tag)+"'" )
+            cur.execute("SELECT Nivel_acceso_persona.ID_pERSONA FROM Nivel_acceso_persona WHERE TAG_ID = %s"%tag)
             lista = cur.fetchall()
             if lista:
                 for id in lista:
@@ -102,7 +102,7 @@ class ABM_CONTROL_ACCESO:
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("SELECT * FROM Persona  WHERE ID =" + "'" + str(id)+"'" )
+            cur.execute("SELECT * FROM Persona  WHERE ID = %s"%id)
             lista = cur.fetchall()
             for ID,Nombre,Apellido,Estado in lista :
                 print("Bienvenido %s, %s" % (Nombre, Apellido))
@@ -122,14 +122,15 @@ class ABM_CONTROL_ACCESO:
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("SELECT * FROM Nivel_acceso_persona  WHERE ID_Persona =" + "'" + str(id)+"'" )
+            #cur.execute("SELECT * FROM Nivel_acceso_persona  WHERE ID_Persona =" + "'" + str(id)+"'" )
+            cur.execute("SELECT * FROM Nivel_acceso_persona  WHERE ID_Persona =%s"%id )
             lista = cur.fetchall()
             ID_NIVEL_ACCESO             =   lista[0][1]
             NIVEL_ACCESO_PERSONA_MAXIMO =   lista[0][2]
-            cur.execute("SELECT NIVEL_ACCESO FROM Nivel_acceso  WHERE ID =" + "'" + str(id_puerta)+"'" )
+            cur.execute("SELECT NIVEL_ACCESO FROM Nivel_acceso  WHERE ID = %s"%id_puerta)
             lista = cur.fetchall()
             NIVEL_ACCESO                =   lista[0][0]
-            print("ID_NIVEL_ACCESO %d, NIVEL_ACCESO_PERSONA_MAXIMO %d, NIVEL_ACCESO %d" %(ID_NIVEL_ACCESO,NIVEL_ACCESO_PERSONA_MAXIMO,NIVEL_ACCESO) )
+            print("ID_NIVEL_ACCESO %s, NIVEL_ACCESO_PERSONA_MAXIMO %s, NIVEL_ACCESO %s" %(ID_NIVEL_ACCESO,NIVEL_ACCESO_PERSONA_MAXIMO,NIVEL_ACCESO) )
             if NIVEL_ACCESO_PERSONA_MAXIMO >= NIVEL_ACCESO:
                 return True
             else:
@@ -171,19 +172,21 @@ class ABM_CONTROL_ACCESO:
         error = False
         try:
             cur = self._conn.cursor()
-            cur.execute("SELECT Permitido, Denegados FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
+            cur.execute("SELECT Permitido, Denegados FROM Puerta_estadistica WHERE ID='%s'"%(id))
+            #cur.execute("SELECT Permitido, Denegados FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
             lista = cur.fetchall()
             if permitido:
                 permitido=lista[0][0]+1
             if denegado:
                 denegado=lista[0][1]+1
-            cur.execute("UPDATE Puerta_estadistica SET TAG_ID="+"'"+str(tag_id)+"'"+",Permitido="+"'"+str(permitido)+"'"+",Denegados= "+"'"+str(denegado)+"'"+" WHERE ID="+"'"+str(id)+"'")
+            #cur.execute("UPDATE Puerta_estadistica SET TAG_ID="+"'"+str(tag_id)+"'"+",Permitido="+"'"+str(permitido)+"'"+",Denegados= "+"'"+str(denegado)+"'"+" WHERE ID="+"'"+str(id)+"'")
+            cur.execute("UPDATE Puerta_estadistica SET TAG_ID= %s,Permitido= %s, Denegados= %s WHERE ID=%s"%(tag_id,permitido,denegado,id))
         except:
             error = True
         finally:
             cur.close()
         return error
-    
+
 if __name__ == '__main__':
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
