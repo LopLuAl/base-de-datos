@@ -90,11 +90,14 @@ INSERT INTO `Horario_laboral` (`Workplace`, `Hora_Entrada`, `Hora_Salida`)
 
 INSERT INTO `Puerta` (`ID`, `Abierta_Cerrada`) VALUES (1, 0);
 INSERT INTO `Puerta` (`ID`, `Abierta_Cerrada`) VALUES (2, 0);
+INSERT INTO `Puerta` (`ID`, `Abierta_Cerrada`) VALUES (3, 0);
 
 INSERT INTO `Nivel_acceso` (`ID`, `NOMBRE`, `NIVEL_ACCESO`)
   VALUES (1, 'Gerencia', 3);
 INSERT INTO `Nivel_acceso` (`ID`, `NOMBRE`, `NIVEL_ACCESO`)
   VALUES (2, 'Recepccion', 1);
+INSERT INTO `Nivel_acceso` (`ID`, `NOMBRE`, `NIVEL_ACCESO`)
+  VALUES (3, 'Cocina', 1);
 
 INSERT INTO `Nivel_acceso_persona` (`ID_Persona`, `ID_Nivel_acceso`,
   `Nivel_acceso`, `TAG_ID`) VALUES  (1, 1, 1, 123456);
@@ -109,8 +112,14 @@ INSERT INTO `Persona` (`ID`, `Nombre`, `Apellido`, `Estado`) VALUES
   (2, 'Jorge', 'Rodriguez', 1);
 INSERT INTO `Persona` (`ID`, `Nombre`, `Apellido`, `Estado`) VALUES
     (3, 'Marco', 'Antonio', 1);
+
 INSERT INTO `Workplace` (`ID`, `Direccion`, `Oficina`, `ID_Empleado`)
   VALUES (1, 1, 1, 0);
+
 INSERT INTO `Puerta_estadistica` (`TAG_ID`,`Permitido`,`Denegados`,`ID`)
   VALUES (0,0,0,1);
+INSERT INTO `Puerta_estadistica` (`TAG_ID`,`Permitido`,`Denegados`,`ID`)
+  VALUES (0,0,0,2);
+INSERT INTO `Puerta_estadistica` (`TAG_ID`,`Permitido`,`Denegados`,`ID`)
+  VALUES (0,0,0,3);
 COMMIT;

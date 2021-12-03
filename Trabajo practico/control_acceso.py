@@ -173,77 +173,39 @@ class ABM_CONTROL_ACCESO:
             cur = self._conn.cursor()
             cur.execute("SELECT Permitido, Denegados FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
             lista = cur.fetchall()
-
             if permitido:
                 permitido=lista[0][0]+1
             if denegado:
                 denegado=lista[0][1]+1
-
             cur.execute("UPDATE Puerta_estadistica SET TAG_ID="+"'"+str(tag_id)+"'"+",Permitido="+"'"+str(permitido)+"'"+",Denegados= "+"'"+str(denegado)+"'"+" WHERE ID="+"'"+str(id)+"'")
         except:
-            print(sys.exc_info()[1])
             error = True
         finally:
             cur.close()
         return error
-    def mostrar_estadistica(self,id):
-        '''
-            `TAG_ID`,`Permitido`,`Denegados`,`ID
-        '''
-        if not self._verifica_conexion():
-            return False
-        error = False
-        try:
-            cur = self._conn.cursor()
-            cur.execute("SELECT * FROM Puerta_estadistica WHERE ID="+"'"+str(id)+"'")
-            lista = cur.fetchall()
-            for TAG_ID,Permitido,Denegados,ID in lista :
-                print("---Estadisitca--- \n|Ultimo TAG ID: %d |\n|Permitidos: %d    |\n|Denegados : %d   |" % (TAG_ID, Permitido,Denegados))
-        except:
-            print(sys.exc_info()[1])
-            error = True
-        finally:
-            cur.close()
-        return error
-
+    
 if __name__ == '__main__':
-    '''
-        Variables de simulacion
-    '''
-    id_pueta = 1
-    tag = 12345678
-    '''
-        Variables de simulacion
-    '''
     bdd=ABM_CONTROL_ACCESO('localhost', 'luciano', 'luciano', 'CONTROL_ACCESO')
     bdd.conectar()
-    id_usuario=bdd.chequear_tag(tag) ## terminar de ver error handler
-    if id_usuario:
-        if bdd.identificar(id_usuario[0]) == True:
-            if bdd.verificar_nivel(id_usuario[0],1) == True:
-                if bdd.verificar_hora_entrada() == True:
-                    print('Bienvendio')
-                    bdd.modificar_estadistica(id_usuario[0],1,0,id_pueta)
+    while 1:
+        id_puerta = int(input("id puerta  "))
+        tag = input("TAG ")
+        id_usuario=bdd.chequear_tag(int(tag)) ## terminar de ver error handler
+        if id_usuario != -1:
+            print(strftime("%a, %d %b %Y", gmtime()))
+            if bdd.identificar(id_usuario[0]) == True:
+                if bdd.verificar_nivel(id_usuario[0],1) == True:
+                    if bdd.verificar_hora_entrada() == True:
+                        print('Bienvendio')
+                        bdd.modificar_estadistica(id_usuario[0],1,0,id_puerta)
+                    else:
+                        print('---Hora de entrada no permitida---')
+                        bdd.modificar_estadistica(id_usuario[0],0,1,id_puerta)
                 else:
-                    print('---Hora de entrada no permitida---')
-                    bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
-                    exit()
+                    print('Nivel no permitido')
+                    bdd.modificar_estadistica(id_usuario[0],0,1,id_puerta)
             else:
-                print('Nivel no permitido')
-                bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
-                exit()
+                print('Usuario dado de baja')
+                bdd.modificar_estadistica(id_usuario[0],0,1,id_puerta)
         else:
-            print('Usuario dado de baja')
-            bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
-            exit()
-    else:
-        print("TAG id no encontrado")
-        bdd.modificar_estadistica(id_usuario[0],0,1,id_pueta)
-        exit()
-    ###Reporte diario a una determinada hora
-    actual=strftime("%H:%M", gmtime())
-
-    if actual=='23:06':
-        print(strftime("%a, %d %b %Y", gmtime()))
-        print('\n\nGenerando reporte diario....\n\n')
-        bdd.mostrar_estadistica(id_pueta)
+            print("TAG id no encontrado")
